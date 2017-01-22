@@ -77,6 +77,8 @@ def processAndSubmitTIL(post):
 	nString = nString[:1].upper() + nString[1:]
 	
 	nString = nString.replace("TIL", "Did you know")
+			
+	nString = nString.replace('.', '?', 1)
 		
 	compFile.write(nString + "\n")
 	print(nString)
