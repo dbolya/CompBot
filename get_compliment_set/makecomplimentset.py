@@ -9,7 +9,7 @@ client_id='ru1yiiBSUuOqaw',\
 client_secret="dVHE9aZQ1wfLKE98VI2ZEJ-dEKU", password='HackTheWorldThisIsAmericaBaby',\
 user_agent='BaronOBullets', username='BaronOBullets')
 
-compFile = open("toastme_hot.txt", 'w+')
+compFile = open("toastme_top.txt", 'w+')
 
 
 def filterPost(submission):
@@ -23,7 +23,7 @@ badstarters = ["also", "and", "but"] # Hide the fact that this is taken from a r
 
 def filterComment(comment,submission):
 	lowercase = comment.body.lower();
-	if(comment.body == "[deleted]" or comment.author.name == submission.author.name or len(lowercase) < 16 or len(lowercase) > 256 or comment.score < 5 or comment.body.strip() == ""):
+	if(comment.body == "[deleted]" or comment.author.name == submission.author.name or len(lowercase) < 16 or len(lowercase) > 256 or comment.score < 3 or comment.body.strip() == ""):
 		return False
 	
 	for st in badstarters:
@@ -58,7 +58,7 @@ dat = sub.parse
 
 modulo = 0
 
-for post in sub.hot(limit=500):
+for post in sub.top(limit=500):
 	modulo += 1
 	if(modulo % 10 == 0):
 		compFile.flush()
