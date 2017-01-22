@@ -9,8 +9,68 @@ client_id='ru1yiiBSUuOqaw',\
 client_secret="dVHE9aZQ1wfLKE98VI2ZEJ-dEKU", password='HackTheWorldThisIsAmericaBaby',\
 user_agent='BaronOBullets', username='BaronOBullets')
 
-sub = instance.subreddit('FreeCompliments')
+compFile = open("toastme_hot.txt", 'w+')
+
+
+def filterPost(submission):
+	if( (submission.link_flair_text is None or submission.link_flair_text.lower() == "selfie" or submission.score > 2) and (not "official" in submission.title.lower()) ):
+		return True
+	return False
+	
+	
+badstuff = ["http", ".com", "imgur", "r/", "reddit", "+", "*", "-", "photo", "pic", "selfie", "hell", "shit", "damn", "fuck", "ass", "cunt", "edit", "sexy", "porn", "boob", "tit", "(", ")", "[", "]", "rack", "pussy", "\"", "\'", "autis", "butt", "weed", "bake", "420", "bastard", "roast", "link", "report", "sub", "fag", "fgt", "retard", "mongoloid", "nig", "m9", "two", "couple", "each", "wrote", "title", "post", "submission", "karma", "upvot", "downvot", "op", "thank", "sex", "bitch", "compliment", "thumbnail", "background", "btw", "everyone", "u/", "toast", "username"]
+badstarters = ["also", "and", "but"] # Hide the fact that this is taken from a reddit thread :^)
+
+def filterComment(comment,submission):
+	lowercase = comment.body.lower();
+	if(comment.body == "[deleted]" or comment.author.name == submission.author.name or len(lowercase) < 16 or len(lowercase) > 256 or comment.score < 5 or comment.body.strip() == ""):
+		return False
+	
+	for st in badstarters:
+		if(lowercase.startswith(st)):
+			return False
+	for st in badstuff:
+		if(st in lowercase):
+			return False
+	if(submission.author.name.lower() in lowercase):
+		return False
+	
+	return True
+	
+endingpunctuation = [".","!","?"]
+def processAndSubmitComment(comment):
+	nString = comment.strip()
+	hasEndingP = False
+	for p in endingpunctuation:
+		if(nString.endswith(p)):
+			hasEndingP = True
+	if(hasEndingP == False):
+		nString += "."
+	nString = nString.replace("\n", " ")
+	
+	nString = nString[:1].upper() + nString[1:]
+		
+	compFile.write(nString + "\n")
+	print(nString)
+			
+sub = instance.subreddit('ToastMe')
 dat = sub.parse
-for post in sub.hot(limit=5):
-	for top_level_comment in post.comments:
-		print(top_level_comment.body)
+
+modulo = 0
+
+for post in sub.hot(limit=500):
+	modulo += 1
+	if(modulo % 10 == 0):
+		compFile.flush()
+	if filterPost(post) == False:
+		continue
+	try:
+		for top_level_comment in post.comments:
+			try:
+				if(filterComment(top_level_comment, post) == False): 
+					continue
+				processAndSubmitComment(top_level_comment.body)
+			except:
+				print("error parsing comment, skipping")
+	except:
+		print("error parsing post, skipping")
