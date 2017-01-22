@@ -4,12 +4,14 @@ var wordNum = 3;
 var sentenceEnders = ['.', '?', '!'];
 
 function output(text) {
-	var out = document.getElementById('out');
-	out.innerHTML = text;
+	// var out = document.getElementById('out');
+	// out.innerHTML = text;
+	// saveAs(text, 'out.txt');
+	console.log(text);
 }
 
 function loadMarkov() {
-	jQuery.get('data.txt?1', function(data) {
+	jQuery.get('data.txt?' + Date.now(), function(data) {
 		list = data.split(/\n/);
 		run();
 	});
@@ -115,6 +117,9 @@ function run() {
 	if (!list) loadMarkov();
 	else {
 		var m = genChain(list);
-		console.log(genSentence(m));
+		output('"' + JSON.stringify(m).replace(/\"/g, '\\\"') + '"');
+		// var i = 100;
+		// while (i-- > 0)
+		// 	console.log(genSentence(m));
 	}
 }
